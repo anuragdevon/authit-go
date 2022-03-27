@@ -1,6 +1,8 @@
 package main
 
 import (
+	"firebase_go_auth/api"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,10 +11,9 @@ func main() {
 	router := gin.Default()
 
 	// routes defination
-	router.GET("/user/signup/", ??.Signup)
-	router.GET("/user/signin/", ??.Signin)
-	router.POST("/user/get/", ??.Userget)
-	// start the server
-	router.Run(":8080")
+	router.POST("/user/signup/", api.UserSignUp)
+	// router.GET("/user/signin/", api.UserSignIn)
+	// router.POST("/user/get/", api.UserGet)
 
+	router.Run(":8080")
 }
