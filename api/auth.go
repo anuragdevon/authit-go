@@ -7,7 +7,7 @@ import (
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
 
-	firebase_conn "firebase_go_auth/firebase"
+	firebase_conn "firebase_go_auth/firebase_conn"
 )
 
 type User struct {
@@ -45,9 +45,11 @@ func UserSignUp(c *gin.Context) {
 
 	_, err = client.CreateUser(ctx, params)
 
+	if err != nil {
+		log.Println("Error in create user!")
+	}
 	// Send Email Verification
 	err = firebase_conn.EmailVerification(input.Email, client, ctx)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "User Creation Failed!"})
 
@@ -56,3 +58,17 @@ func UserSignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User Created Successfully!"})
 }
 
+// func UserSignIn(c *gin.Context) {
+// 	// ctx, client, err := firebase_conn.FirebaseInit()
+// 	// if err != nil {
+// 	// 	log.Println(err)
+// 	// 	c.JSON(http.StatusInternalServerError, gin.H{"message": "Firebase Initialization Failed!"})
+
+// 	// }
+
+// 	err := firebase_conn.SignInWithEmailPasword()
+
+// 	if err != nil {
+// 		c.JSON(http.StatusOK, gin.H{"message": "User Created Successfully!"})
+// 	}
+// }
