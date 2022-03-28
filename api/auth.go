@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -24,13 +25,21 @@ type LoginUser struct {
 	Password string `json:"password"`
 }
 
+type LoginData struct {
+	IDToken      string `json:"idToken"`
+	RefreshToken string `json:"refreshToken"`
+	UID          string `json:"uid"`
+	Email        string `json:"email"`
+	Name         string `json:"name"`
+}
+
 func UserSignUp(c *gin.Context) {
 
 	// Extract Input
 	var input NewUser
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"response": "Invalid Input!"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"response": "Invalid Input!"})
 		return
 	}
 
@@ -45,7 +54,7 @@ func UserSignUp(c *gin.Context) {
 	_, err = client.GetUserByEmail(ctx, input.Email)
 	if err == nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"response": "User already exists!"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"response": "User already exists!"})
 		return
 	}
 
@@ -85,7 +94,7 @@ func UserSignIn(c *gin.Context) {
 	var input NewUser
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"response": "Invalid Input!"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"response": "Invalid Input!"})
 		return
 	}
 
@@ -99,13 +108,13 @@ func UserSignIn(c *gin.Context) {
 	// Check if user exists
 	user, err := client.GetUserByEmail(ctx, input.Email)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"response": "No Such User Exists!"})
+		c.JSON(http.StatusNoContent, gin.H{"response": "No Such User Exists!"})
 		return
 	}
 
 	// Check if user is verified
 	if !user.EmailVerified {
-		c.JSON(http.StatusBadRequest, gin.H{"response": "Email Not Verified!"})
+		c.JSON(http.StatusUnauthorized, gin.H{"response": "Email Not Verified!"})
 		return
 	}
 
@@ -115,11 +124,24 @@ func UserSignIn(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
 		return
 	}
-	log.Println("\nLOGIN DATA: ", resp.Body)
 
-	// Check
+	defer resp.Body.Close()
 
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"response": "User Created Successfully!"})
+	if resp.StatusCode == http.StatusOK {
+		decoder := json.NewDecoder(resp.Body)
+		log.Println("SOMEDATA: ", decoder)
+		var data map[string]interface{}
+		err = decoder.Decode(&data)
+		if err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
+			return
+		}
+		// c.Header("id_token", data["idToken"].(string))
+		// c.Header("refresh_token", data["refresh_Token"].(string))
+		c.JSON(http.StatusOK, gin.H{"response": gin.H{"id_token": data["idToken"], "refresh_token": data["refreshToken"], "uid": data["localId"].(string), "email": data["email"].(string), "name": data["displayName"].(string)}})
+
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"response": "Invalid Credentials!"})
 	}
 }

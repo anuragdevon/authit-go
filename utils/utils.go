@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InternalRequest(payload map[string]interface{}, reqtype string, endpoint string) (*http.Response, error) {
@@ -23,4 +25,9 @@ func InternalRequest(payload map[string]interface{}, reqtype string, endpoint st
 	}
 	return resp, err
 
+}
+
+func Response(c *gin.Context, code int, obj interface{}) {
+	c.Header("Content-Type", "application/json")
+	c.JSON(code, obj)
 }
