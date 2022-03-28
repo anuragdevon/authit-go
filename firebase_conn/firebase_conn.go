@@ -21,7 +21,7 @@ func FirebaseInit() (context.Context, *auth.Client, error) {
 
 	serviceAccountKeyFilePath, err := filepath.Abs("./firebase_conn/serviceAccountKey.json")
 	if err != nil {
-		log.Panic("Unable to load Firebase Cred Files!")
+		log.Println("Unable to load Firebase Cred Files!")
 		return ctx, nil, err
 	}
 
@@ -30,14 +30,14 @@ func FirebaseInit() (context.Context, *auth.Client, error) {
 	//Firebase admin SDK initialization
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		log.Panic("Unable to initialize Firebase App!")
+		log.Println("Unable to initialize Firebase App!")
 		return ctx, nil, err
 	}
 
 	client, err := app.Auth(context.Background())
 
 	if err != nil {
-		log.Panic("Unable to initialize Firebase Auth Client!")
+		log.Println("Unable to initialize Firebase Auth Client!")
 		return ctx, nil, err
 	}
 
