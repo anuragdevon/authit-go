@@ -11,7 +11,7 @@ import (
 	firebase_conn "firebase_go_auth/firebase_conn"
 )
 
-type NewUser struct {
+type newUser struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -20,23 +20,15 @@ type NewUser struct {
 	// Image   string `json:"image"`
 }
 
-type LoginUser struct {
+type loginUser struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-}
-
-type LoginData struct {
-	IDToken      string `json:"idToken"`
-	RefreshToken string `json:"refreshToken"`
-	UID          string `json:"uid"`
-	Email        string `json:"email"`
-	Name         string `json:"name"`
 }
 
 func UserSignUp(c *gin.Context) {
 
 	// Extract Input
-	var input NewUser
+	var input newUser
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusNotAcceptable, gin.H{"response": "Invalid Input!"})
@@ -91,7 +83,7 @@ func UserSignUp(c *gin.Context) {
 func UserSignIn(c *gin.Context) {
 
 	// Extract Input
-	var input NewUser
+	var input loginUser
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusNotAcceptable, gin.H{"response": "Invalid Input!"})
@@ -129,16 +121,15 @@ func UserSignIn(c *gin.Context) {
 
 	if resp.StatusCode == http.StatusOK {
 		decoder := json.NewDecoder(resp.Body)
-		log.Println("SOMEDATA: ", decoder)
+
 		var data map[string]interface{}
+
 		err = decoder.Decode(&data)
 		if err != nil {
 			log.Println(err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
 			return
 		}
-		// c.Header("id_token", data["idToken"].(string))
-		// c.Header("refresh_token", data["refresh_Token"].(string))
 		c.JSON(http.StatusOK, gin.H{"response": gin.H{"id_token": data["idToken"], "refresh_token": data["refreshToken"], "uid": data["localId"].(string), "email": data["email"].(string), "name": data["displayName"].(string)}})
 
 	} else {

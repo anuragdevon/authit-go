@@ -4,7 +4,9 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
@@ -53,7 +55,12 @@ func EmailVerification(emailID string, client *auth.Client, ctx context.Context)
 }
 
 func SignInWithEmailPassword(email string, password string) (*http.Response, error) {
-	endpoint := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBUJSc3FUtuxC7iFlQuo0Ka2eYVPPuHKwI"
+
+	API_KEY := os.Getenv("API_KEY")
+	endpoint := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
+
+	replacer := strings.NewReplacer("{API_KEY}", API_KEY)
+	endpoint = replacer.Replace(endpoint)
 
 	payload := map[string]interface{}{"email": email, "password": password, "returnSecureToken": true}
 
