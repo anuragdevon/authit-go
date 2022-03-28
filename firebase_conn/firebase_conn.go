@@ -3,13 +3,17 @@ package firebase_conn
 import (
 	"context"
 	"log"
+	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"google.golang.org/api/option"
 
 	"firebase_go_auth/email"
+	"firebase_go_auth/utils"
 )
 
 func FirebaseInit() (context.Context, *auth.Client, error) {
@@ -50,14 +54,17 @@ func EmailVerification(emailID string, client *auth.Client, ctx context.Context)
 	return email.SendMail(emailID, link)
 }
 
-// func SignInWithEmailPasword() error {
-// 	API_KEY := os.Getenv("API_KEY")
-// 	r := strings.NewReplacer(API_KEY)
-// 	endpoint := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
-// 	r.Replace(endpoint)
-// 	payload := {"email":"[user@example.com]","password":"[PASSWORD]","returnSecureToken":true}
-// 	err := utils.InternalRequest(payload, "POST", endpoint)
+func SignInWithEmailPassword(email string, password string) (*http.Response, error) {
 
-// 	return err
+	API_KEY := os.Getenv("API_KEY")
 
-// }
+	r := strings.NewReplacer(API_KEY)
+	endpoint := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
+	r.Replace(endpoint)
+
+	payload := map[string]interface{}{"email": email, "password": password, "returnSecureToken": true}
+
+	resp, err := utils.InternalRequest(payload, "POST", endpoint)
+
+	return resp, err
+}

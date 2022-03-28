@@ -36,7 +36,7 @@ func UserSignUp(c *gin.Context) {
 
 	ctx, client, err := firebase_conn.FirebaseInit()
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
 		return
 	}
@@ -44,6 +44,7 @@ func UserSignUp(c *gin.Context) {
 	// Check if user already exists
 	_, err = client.GetUserByEmail(ctx, input.Email)
 	if err == nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"response": "User already exists!"})
 		return
 	}
@@ -61,8 +62,8 @@ func UserSignUp(c *gin.Context) {
 	_, err = client.CreateUser(ctx, params)
 
 	if err != nil {
-		log.Println("Unable to create user!")
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Unable to create user!"})
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"response": "Unable to create user!"})
 		return
 	}
 
@@ -70,43 +71,55 @@ func UserSignUp(c *gin.Context) {
 	err = firebase_conn.EmailVerification(input.Email, client, ctx)
 	if err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Verification Email Sending Failed!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"response": "Verification Email Sending Failed!"})
 		return
 
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User Created Successfully!"})
+	c.JSON(http.StatusOK, gin.H{"response": "User Created Successfully!"})
 }
 
-// func UserSignIn(c *gin.Context) {
+func UserSignIn(c *gin.Context) {
 
-// 	// Extract Input
-// 	var input NewUser
-// 	if err := c.ShouldBindJSON(&input); err != nil {
-// 		log.Println(err.Error())
-// 		c.JSON(http.StatusBadRequest, gin.H{"response": "Invalid Input!"})
-// 		return
-// 	}
+	// Extract Input
+	var input NewUser
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"response": "Invalid Input!"})
+		return
+	}
 
-// 	ctx, client, err := firebase_conn.FirebaseInit()
-// 	if err != nil {
-// 		log.Println(err)
-// 		c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
-// 		return
-// 	}
+	ctx, client, err := firebase_conn.FirebaseInit()
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
+		return
+	}
 
-// 	// Check if user already exists
-// 	_, err = client.GetUserByEmail(ctx, input.Email)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"response": "No Such User Exists!"})
-// 		return
-// 	}
+	// Check if user exists
+	user, err := client.GetUserByEmail(ctx, input.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"response": "No Such User Exists!"})
+		return
+	}
 
-// 	// err := firebase_conn.SignInWithEmailPasword()
+	// Check if user is verified
+	if !user.EmailVerified {
+		c.JSON(http.StatusBadRequest, gin.H{"response": "Email Not Verified!"})
+		return
+	}
 
-// 	// Check
+	resp, err := firebase_conn.SignInWithEmailPassword(input.Email, input.Password)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"response": "Internal Server Error!"})
+		return
+	}
+	log.Println("\nLOGIN DATA: ", resp.Body)
 
-// 	if err != nil {
-// 		c.JSON(http.StatusOK, gin.H{"message": "User Created Successfully!"})
-// 	}
-// }
+	// Check
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"response": "User Created Successfully!"})
+	}
+}

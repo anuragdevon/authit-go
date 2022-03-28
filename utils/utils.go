@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-func InternalRequest(payload map[string]interface{}, reqtype string, endpoint string) (error, *http.Response) {
+func InternalRequest(payload map[string]interface{}, reqtype string, endpoint string) (*http.Response, error) {
 
 	json_payload, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err.Error())
 	}
 	var resp *http.Response
 
@@ -21,6 +21,6 @@ func InternalRequest(payload map[string]interface{}, reqtype string, endpoint st
 	} else {
 		resp, err = http.Post(endpoint, "application/json", bytes.NewBuffer(json_payload))
 	}
-	return err, resp
+	return resp, err
 
 }
