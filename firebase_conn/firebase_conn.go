@@ -19,7 +19,7 @@ import (
 func FirebaseInit() (context.Context, *auth.Client, error) {
 	ctx := context.Background()
 
-	serviceAccountKeyFilePath, err := filepath.Abs("./firebase_conn/serviceAccountKey.json")
+	serviceAccountKeyFilePath, err := filepath.Abs("./serviceAccountKey.json")
 	if err != nil {
 		log.Println("Unable to load Firebase Cred Files!")
 		return ctx, nil, err
