@@ -16,30 +16,13 @@ func createMessage(email string, message string, to string, subject string) stri
 }
 
 func SendMail(emailID string, link string) error {
-	// from := os.Getenv("EMAIL_FROM")
-	// password := os.Getenv("EMAIL_PASSWORD")
-
-	// to := os.Getenv(emailID)
-	// information := "Click this link to verify your account[Golang Service]: " + link
-	// subject := "Email Verification from Golang Service"
-	// msg := []byte(createMessage(emailID, information, to, subject))
-
-	// host := os.Getenv("EMAIL_HOST")
-	// port := os.Getenv("EMAIL_PORT")
-
-	// auth := smtp.PlainAuth("", from, password, host)
-	// err := smtp.SendMail(host+":"+port, auth, from, []string{to}, msg)
-
-	// if err != nil {
-	// 	log.Println("Error while sending email: ", err)
-	// }
-
 	from := os.Getenv("EMAIL_FROM")
 	password := os.Getenv("EMAIL_PASSWORD")
 
-	to := os.Getenv("EMAIL_TO")
-	subject := "Contact From: "
-	msg := []byte(createMessage("SOMEEMAIL", "MESSAGE", to, subject))
+	to := emailID
+	subject := "Email Verification from Golang Auth Service"
+	information := "Click this link to verify your account[Golang Auth]: " + link
+	msg := []byte(createMessage(emailID, information, to, subject))
 
 	host := os.Getenv("EMAIL_HOST")
 	port := os.Getenv("EMAIL_PORT")
