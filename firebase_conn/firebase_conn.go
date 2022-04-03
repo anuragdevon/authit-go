@@ -68,3 +68,17 @@ func SignInWithEmailPassword(email string, password string) (*http.Response, err
 
 	return resp, err
 }
+
+func RenewTokens(RefreshToken string) (*http.Response, error) {
+	API_KEY := os.Getenv("API_KEY")
+	endpoint := "https://securetoken.googleapis.com/v1/token?key={API_KEY}"
+
+	replacer := strings.NewReplacer("{API_KEY}", API_KEY)
+	endpoint = replacer.Replace(endpoint)
+
+	payload := map[string]interface{}{"grant_type": "refresh_token", "refresh_token": RefreshToken}
+
+	resp, err := utils.InternalRequest(payload, "POST", endpoint)
+
+	return resp, err
+}

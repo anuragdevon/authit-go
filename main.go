@@ -3,12 +3,24 @@ package main
 import (
 	"firebase_go_auth/api"
 	"log"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
+
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+		}
+		c.Next()
+	}
+}
 
 func main() {
 	err := godotenv.Load()
@@ -18,21 +30,12 @@ func main() {
 	// Server route initialization
 	router := gin.Default()
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:8080"},
-		AllowMethods:     []string{"PUT", "POST", "GET", "POST", "DELETE"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	router.Use(corsMiddleware())
+
 	// routes defination
-	router.POST("/user/signup/", api.UserSignUp)
-	router.POST("/user/signin/", api.UserSignIn)
-	// router.POST("/user/get/", api.UserGet)
+	router.POST("/user/signup", api.UserSignUp)
+	router.POST("/user/signin", api.UserSignIn)
+	router.POST("/user/get", api.UserGet)
 
 	router.Run(":8080")
 }
