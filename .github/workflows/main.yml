@@ -40,7 +40,7 @@ jobs:
 
       # Build Docker Image
       - name: Docker Build
-        run: docker login --username=_ --password-stdin=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+        run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
 
       # Push the docker image to container registry
       - name: Publish
