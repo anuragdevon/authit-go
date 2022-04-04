@@ -30,4 +30,4 @@ COPY --from=build /firebase_go_auth /firebase_go_auth
 EXPOSE 8080
 
 # Start Server
-CMD cd firebase_go_auth && ./firebase_go_auth | tee firebase_go_auth.log
+CMD cd firebase_go_auth && ./firebase_go_auth | tee firebase_go_auth.log 

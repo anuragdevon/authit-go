@@ -3,6 +3,7 @@ package main
 import (
 	"firebase_go_auth/api"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -24,6 +25,7 @@ func corsMiddleware() gin.HandlerFunc {
 
 func main() {
 	err := godotenv.Load()
+	port := os.Getenv("PORT")
 	if err != nil {
 		log.Fatal("Error in loading env!")
 	}
@@ -37,5 +39,5 @@ func main() {
 	router.POST("/user/signin", api.UserSignIn)
 	router.POST("/user/get", api.UserGet)
 
-	router.Run(":8080")
+	router.Run(":" + port)
 }
