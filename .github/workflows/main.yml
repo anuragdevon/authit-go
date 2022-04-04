@@ -36,6 +36,7 @@ jobs:
         run: |
           touch serviceAccountKey.json
           jq -n ${{ secrets.SERVICE_ACCOUNT }} > serviceAccountKey.json  
+          echo "Config vars done."
 
       # Build Docker Image
       - name: Docker Build
