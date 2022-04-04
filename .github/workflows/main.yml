@@ -35,7 +35,7 @@ jobs:
       - name: Create service_account file
         run: |
           touch serviceAccountKey.json
-          echo ${{ secrets.SERVICE_ACCOUNT }} >> serviceAccountKey.json
+          echo ${{ secrets.SERVICE_ACCOUNT }} | tee process.serviceAccountKey.json > /dev/null
 
       # Build Docker Image
       - name: Docker Build
