@@ -1,49 +1,49 @@
-# name: firebase-go-auth-heroku CD
+name: firebase-go-auth-heroku CD
 
-# # Basic OPs
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     branches:
-#       - main
+# Basic OPs
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-# # Setup jobs
-# jobs:
-#   deploy:
-#     name: Deploy to Heroku
-#     runs-on: ubuntu-latest
-#     steps:
+# Setup jobs
+jobs:
+  deploy:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    steps:
     
-#       # Clone the repository
-#       - name: Checkout
-#         uses: actions/checkout@v2
+      # Clone the repository
+      - name: Checkout
+        uses: actions/checkout@v2
 
-#       #  Setup Production Environment Variables
-#       - name: Create env file
-#         run: |
-#           touch .env
-#           echo API_KEY=${{ secrets.API_KEY }} >> .env
-#           echo EMAIL_FROM=${{ secrets.EMAIL_FROM }} >> .env
-#           echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
-#           echo EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} >> .env
-#           echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
-#           echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
+      #  Setup Production Environment Variables
+      - name: Create env file
+        run: |
+          touch .env
+          echo API_KEY=${{ secrets.API_KEY }} >> .env
+          echo EMAIL_FROM=${{ secrets.EMAIL_FROM }} >> .env
+          echo EMAIL_FROM_NAME=${{ secrets.EMAIL_FROM_NAME }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo SEND_IN_BLUE_ENDPOINT=${{ secrets.SEND_IN_BLUE_ENDPOINT }} >> .env
+          echo SEND_IN_BLUE_API_KEY=${{ secrets.SEND_IN_BLUE_API_KEY }} >> .env
 
-#       # Setup Firebase service accounts
-#       - name: Create service_account file
-#         run: |
-#           touch serviceAccountKey.json
-#           jq -n ${{ secrets.SERVICE_ACCOUNT }} > serviceAccountKey.json  
-#           echo "Config vars done."
+      # Setup Firebase service accounts
+      - name: Create service_account file
+        run: |
+          touch serviceAccountKey.json
+          jq -n ${{ secrets.SERVICE_ACCOUNT }} > serviceAccountKey.json  
+          echo "Config vars done."
 
-#       # Build Docker Image
-#       - name: Docker Build
-#         run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+      # Build Docker Image
+      - name: Docker Build
+        run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
 
-#       # Push the docker image to container registry
-#       - name: Publish
-#         run: |
-#           heroku container:push web --app ${{ secrets.HEROKU_APP_NAME }}
-#           heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}
+      # Push the docker image to container registry
+      - name: Publish
+        run: |
+          heroku container:push web --app ${{ secrets.HEROKU_APP_NAME }}
+          heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}

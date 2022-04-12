@@ -21,7 +21,7 @@ func FirebaseInit() (context.Context, *auth.Client, error) {
 
 	serviceAccountKeyFilePath, err := filepath.Abs("./serviceAccountKey.json")
 	if err != nil {
-		log.Println("Unable to load Firebase Cred Files!")
+		log.Println(err.Error())
 		return ctx, nil, err
 	}
 
@@ -30,14 +30,14 @@ func FirebaseInit() (context.Context, *auth.Client, error) {
 	//Firebase admin SDK initialization
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		log.Println("Unable to initialize Firebase App!")
+		log.Println(err.Error())
 		return ctx, nil, err
 	}
 
 	client, err := app.Auth(context.Background())
 
 	if err != nil {
-		log.Println("Unable to initialize Firebase Auth Client!")
+		log.Println(err.Error())
 		return ctx, nil, err
 	}
 
@@ -47,7 +47,7 @@ func FirebaseInit() (context.Context, *auth.Client, error) {
 func EmailVerification(emailID string, client *auth.Client, ctx context.Context) error {
 	link, err := client.EmailVerificationLinkWithSettings(ctx, emailID, nil)
 	if err != nil {
-		log.Println("Error while generating email verification link: ", err)
+		log.Println(err.Error())
 		return err
 	}
 

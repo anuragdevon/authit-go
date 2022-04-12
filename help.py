@@ -1,1 +1,0 @@
-# sudo docker run --rm -it -d --name gateway -p 8080:8080/tcp -p 1002:1002/tcp gcr.io

@@ -3,7 +3,6 @@ package email
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -70,14 +69,14 @@ func SendMail(emailTo string, link string) error {
 
 	resp, err := c.Do(req)
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		log.Println(err.Error())
 		return err
 	}
 
 	defer resp.Body.Close()
 	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf(err.Error())
+		log.Printf(err.Error())
 		return err
 	}
 	return err

@@ -6,7 +6,6 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
 	github.com/joho/godotenv v1.4.0
-	github.com/sendinblue/APIv3-go-library v2.0.0+incompatible
 	google.golang.org/api v0.73.0
 )
 
@@ -16,7 +15,6 @@ require (
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/iam v0.3.0 // indirect
 	cloud.google.com/go/storage v1.21.0 // indirect
-	github.com/antihax/optional v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
